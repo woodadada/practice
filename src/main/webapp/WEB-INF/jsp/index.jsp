@@ -7,6 +7,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-name : ${name}
+name : ${name} sourceTree 연동 테스트
 </body>
 </html>

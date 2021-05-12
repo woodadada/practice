@@ -9,6 +9,7 @@ public class WebController {
 	@RequestMapping("/")
 	public String jspCheck(Model model) {
 		System.out.println(" /jsp 타는지 ");
+		System.out.println(" sourceTree 연동 테스트 ");
 		
 		model.addAttribute("name", "name 입니다.");
 		return "index";
