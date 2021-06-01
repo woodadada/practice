@@ -1,10 +1,13 @@
 package com.jw.practice.controller;
 
+import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.jw.practice.model.Message;
+import com.jw.practice.model.StatusEnum;
 import com.jw.practice.model.User;
 import com.jw.practice.service.UserService;
 
@@ -39,14 +44,30 @@ public class UserRestController {
 		return new ResponseEntity<Void>(HttpStatus.CREATED);
 	}
 	
+	/**
+	 * 회원 식별 번호로 회원 정보 조회
+	 * 응답 상태, 메세지, 데이터 리턴 구조로 변경
+	 * @param id
+	 * @return
+	 */
 	@GetMapping("/user/{id}")
-	public ResponseEntity<User> userList(@PathVariable Long id) {
-		Optional<User> user = userService.getUser(id); 
+	public ResponseEntity<Message> userList(@PathVariable Long id) {
+		Optional<User> user = userService.getUser(id);
+		// NPE 대응 추가 필요
+		Message message = new Message();
+		message.setData(user.get());
+		HttpHeaders headers= new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+        
 		if(user.isPresent()){	//exist
-			return new ResponseEntity<User>(user.get(), HttpStatus.OK);
+			message.setStatus(StatusEnum.OK);
+			message.setMessage("성공 코드");
+			return new ResponseEntity<Message>(message, headers, HttpStatus.OK);
 		}
 		else{
-			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+			message.setStatus(StatusEnum.BAD_REQUEST);
+			message.setMessage("실패 코드");
+			return new ResponseEntity<Message>(message, headers, HttpStatus.NOT_FOUND);
 		}		
 	}
 	
