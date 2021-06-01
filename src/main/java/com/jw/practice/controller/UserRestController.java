@@ -2,6 +2,7 @@ package com.jw.practice.controller;
 
 import java.nio.charset.Charset;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,11 +56,11 @@ public class UserRestController {
 		Optional<User> user = userService.getUser(id);
 		// NPE 대응 추가 필요
 		Message message = new Message();
-		message.setData(user.get());
 		HttpHeaders headers= new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
         
 		if(user.isPresent()){	//exist
+			message.setData(user.get());
 			message.setStatus(StatusEnum.OK);
 			message.setMessage("성공 코드");
 			return new ResponseEntity<Message>(message, headers, HttpStatus.OK);
@@ -69,6 +70,27 @@ public class UserRestController {
 			message.setMessage("실패 코드");
 			return new ResponseEntity<Message>(message, headers, HttpStatus.NOT_FOUND);
 		}		
+	}
+	
+	/**
+	 * 전체 회원 조회
+	 * @return
+	 */
+	@GetMapping(value = "user/all", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Message> getAllUsers(){
+		
+		// NPE 대응 추가 필요
+		List<User> list = userService.findAll();
+		
+		Message message = new Message();
+		HttpHeaders headers= new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+        
+        message.setStatus(StatusEnum.OK);
+		message.setMessage("성공 코드");
+        message.setData(list);
+        
+        return new ResponseEntity<Message>(message, headers, HttpStatus.OK);
 	}
 	
 	@PutMapping("/user/{id}")

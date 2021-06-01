@@ -1,5 +1,7 @@
 package com.jw.practice.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,5 +84,12 @@ public class UserService {
 		else{
 			return false;
 		}
+	}
+	
+	public List<User> findAll() {
+		List<User> users = new ArrayList<>();
+		userRepository.findAll().forEach(e -> users.add(e));
+		
+		return users;
 	}
 }
